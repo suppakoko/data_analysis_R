@@ -192,6 +192,52 @@ Q3. '여러 조건 중 하나 이상 충족'하면 추출하도록 `filter()` �
 
 
 
+#################################################################
+### 풀이
+
+Q1. 자동차 배기량에 따라 고속도로 연비가 다른지 알아보려고 합니다. `displ`(배기량)이 `4` 이하인 자동차와 `5` 이상인 자동차 중 어떤 자동차의 `hwy`(고속도로 연비)가 평균적으로 더 높은지 알아보세요.
+
+
+mpg <- as.data.frame(ggplot2::mpg)   # mpg 데이터 불러오기
+
+mpg_a <- mpg %>% filter(displ <= 4)  # displ 4 이하 추출
+mpg_b <- mpg %>% filter(displ >= 5)  # displ 5 이상 추출
+
+mean(mpg_a$hwy)  # displ 4 이하 hwy 평균
+mean(mpg_b$hwy)  # displ 5 이상 hwy 평균
+
+
+
+
+
+
+
+
+
+
+
+
+Q2. 자동차 제조 회사에 따라 도시 연비가 다른지 알아보려고 합니다. `"audi"`와 `"toyota"` 중 어느 `manufacturer`(자동차 제조 회사)의 `cty`(도시 연비)가 평균적으로 더 높은지 알아보세요.
+
+
+mpg_audi <- mpg %>% filter(manufacturer == "audi")      # audi 추출
+mpg_toyota <- mpg %>% filter(manufacturer == "toyota")  # toyota 추출
+
+mean(mpg_audi$cty)    # audi의 cty 평균
+mean(mpg_toyota$cty)  # toyota의 cty 평균
+
+
+
+
+
+
+Q3. `"chevrolet"`, `"ford"`, `"honda"` 자동차의 고속도로 연비 평균을 알아보려고 합니다. 이 회사들의 자동차를 추출한 뒤 `hwy` 전체 평균을 구해보세요.
+
+
+# manufacturer가 chevrolet, ford, honda에 해당하면 추출
+mpg_new <- mpg %>% filter(manufacturer %in% c("chevrolet", "ford", "honda"))
+mean(mpg_new$hwy)
+
 
 
 #################################################################
@@ -262,6 +308,28 @@ exam %>%
 
 
 
+#################################################################
+### 풀이
+
+Q1. `mpg` 데이터는 11개 변수로 구성되어 있습니다. 이 중 일부만 추출해서 분석에 활용하려고 합니다. `mpg` 데이터에서 `class`(자동차 종류), `cty`(도시 연비) 변수를 추출해 새로운 데이터를 만드세요. 새로 만든 데이터의 일부를 출력해서 두 변수로만 구성되어 있는지 확인하세요.
+
+
+mpg <- as.data.frame(ggplot2::mpg)  # mpg 데이터 불러오기
+
+df <- mpg %>% select(class, cty)    # class, cty 변수 추출
+head(df)                            # df 일부 출력
+
+
+
+
+
+Q2. 자동차 종류에 따라 도시 연비가 다른지 알아보려고 합니다. 앞에서 추출한 데이터를 이용해서 `class`(자동차 종류)가 `"suv"`인 자동차와 `"compact"`인 자동차 중 어떤 자동차의 `cty`(도시 연비)가 더 높은지 알아보세요.
+
+df_suv <- df %>% filter(class == "suv")          # class가 suv인 행 추출
+df_compact <- df %>% filter(class == "compact")  # class가 compact인 행 추출
+
+mean(df_suv$cty)                                 # suv의 cty 평균
+mean(df_compact$cty)                             # compact의 cty 평균
 
 
 #################################################################
@@ -305,6 +373,19 @@ exam %>% arrange(class, math)  # class 및 math 오름차순 정렬
 
 
 
+
+
+
+
+
+#################################################################
+#### 풀이
+
+mpg <- as.data.frame(ggplot2::mpg)          # mpg 데이터 불러오기
+
+mpg %>% filter(manufacturer == "audi") %>%  # audi 추출
+  arrange(desc(hwy)) %>%                    # hwy 내림차순 정렬
+  head(5)                                   # 5행까지 출력
 
 
 
@@ -375,6 +456,87 @@ exam %>%
 - Q4. 1~3번 문제를 해결할 수 있는 하나로 연결된 `dplyr` 구문을 만들어 출력하세요. 데이터는 복사본 대신 `mpg` 원본을 이용하세요.
 ## 힌트
 앞에서 만든 코드들을 `%>%`를 이용해 연결하면 됩니다. 변수를 추가하는 작업을 하나의 `mutate()` 구성하면 코드를 더 간결하게 만들 수 있습니다.
+
+
+
+
+### 풀이
+
+Q1. `mpg` 데이터 복사본을 만들고, `cty`와 `hwy`를 더한 '합산 연비 변수'를 추가하세요.
+
+mpg <- as.data.frame(ggplot2::mpg)                # mpg 데이터 불러오기
+mpg_new <- mpg                                    # 복사본 만들기
+
+mpg_new <- mpg_new %>% mutate(total = cty + hwy)  # 합산 변수 만들기
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q2. 앞에서 만든 '합산 연비 변수'를 2로 나눠 '평균 연비 변수'를 추가세요.
+
+mpg_new <- mpg_new %>% mutate(mean = total/2)     # 평균 변수 만들기
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q3. '평균 연비 변수'가 가장 높은 자동차 3종의 데이터를 출력하세요.
+
+mpg_new %>%
+  arrange(desc(mean)) %>%  # 내림차순 정렬
+  head(3)                  # 상위 3행 출력
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q4. 1~3번 문제를 해결할 수 있는 하나로 연결된 `dplyr` 구문을 만들어 출력하세요. 데이터는 복사본 대신 `mpg` 원본을 이용하세요.
+
+mpg %>%
+  mutate(total = cty + hwy,   # 합산 변수 만들기
+         mean = total/2) %>%  # 평균 변수 만들기
+  arrange(desc(mean)) %>%     # 내림차순 정렬
+  head(3)                     # 상위 3행 출력
+
 
 
 
@@ -475,6 +637,25 @@ mpg %>%
 
 
 
+##################################################################
+## 풀이
+
+mpg %>%
+  group_by(manufacturer) %>%           # 회사별로 분리
+  filter(class == "suv") %>%           # suv 추출
+  mutate(tot = (cty+hwy)/2) %>%        # 통합 연비 변수 생성
+  summarise(mean_tot = mean(tot)) %>%  # 통합 연비 평균 산출
+  arrange(desc(mean_tot)) %>%          # 내림차순 정렬
+  head(5)                              # 1~5위까지 출력
+
+
+
+
+
+
+
+
+
 
 
 
@@ -512,6 +693,78 @@ mpg %>%
 `filter()`를 이용해 `"compact"` 차종만 남긴 후 회사별 자동차 수를 구하면 됩니다. 자동차 수는 데이터가 몇 행으로 구성되는지 빈도를 구하면 알 수 있습니다. 빈도는 `n()`을 이용해 구할 수 있습니다.
 
 
+
+
+
+
+##################################################################
+### 풀이
+
+
+Q1. `mpg` 데이터의 `class`는 `"suv"`, `"compact"` 등 자동차를 특징에 따라 일곱 종류로 분류한 변수입니다. 어떤 차종의 연비가 높은지 비교해보려고 합니다. `class`별 `cty` 평균을 구해보세요.
+
+mpg <- as.data.frame(ggplot2::mpg)  # mpg 데이터 불러오기
+
+mpg %>%
+  group_by(class) %>%               # class별 분리
+  summarise(mean_cty = mean(cty))   # cty 평균 구하기
+
+
+
+
+
+
+
+
+
+Q2. 앞 문제의 출력 결과는 `class` 값 알파벳 순으로 정렬되어 있습니다. 어떤 차종의 도시 연비가 높은지 쉽게 알아볼 수 있도록 `cty` 평균이 높은 순으로 정렬해 출력하세요.
+
+
+
+mpg %>%
+  group_by(class) %>%                  # class별 분리
+  summarise(mean_cty = mean(cty)) %>%  # cty 평균 구하기
+  arrange(desc(mean_cty))              # 내림차순 정렬하기
+
+
+
+
+
+
+
+
+
+
+Q3. 어떤 회사 자동차의 `hwy`(고속도로 연비)가 가장 높은지 알아보려고 합니다. `hwy` 평균이 가장 높은 회사 세 곳을 출력하세요.
+
+
+
+mpg %>%
+  group_by(manufacturer) %>%           # manufacturer별 분리
+  summarise(mean_hwy = mean(hwy)) %>%  # hwy 평균 구하기
+  arrange(desc(mean_hwy)) %>%          # 내림차순 정렬하기
+  head(3)                              # 상위 3행 출력
+
+
+
+
+
+
+
+
+
+
+
+Q4. 어떤 회사에서 `"compact"`(경차) 차종을 가장 많이 생산하는지 알아보려고 합니다. 각 회사별 `"compact"` 차종 수를 내림차순으로 정렬해 출력하세요.
+
+
+
+
+mpg %>%
+  filter(class == "compact") %>%  # compact 추출
+  group_by(manufacturer) %>%      # manufacturer별 분리
+  summarise(count = n()) %>%      # 빈도 구하기
+  arrange(desc(count))            # 내림차순 정렬
 
 
 
@@ -670,6 +923,29 @@ fuel  # 출력
 
 
 
+############################################################
+### 풀이
+
+Q1. `mpg` 데이터에는 연료 종류를 나타낸 `fl` 변수는 있지만 연료 가격을 나타낸 변수는 없습니다. 위에서 만든 `fuel` 데이터를 이용해서 `mpg` 데이터에 `price_fl`(연료 가격) 변수를 추가하세요.
+
+mpg <- as.data.frame(ggplot2::mpg)      # mpg 데이터 불러오기
+mpg <- left_join(mpg, fuel, by = "fl")  # mpg에 연료 가격 변수 추가
+
+
+
+
+
+
+Q2. 연료 가격 변수가 잘 추가됐는지 확인하기 위해서 `model`, `fl`, `price_fl` 변수를 추출해 앞부분 5행을 출력해 보세요.
+
+mpg %>%
+  select(model, fl, price_fl) %>%       # model, fl, price_fl 추출
+  head(5)     
+
+
+
+
+
 
 
 ############################################################### 정리하기
@@ -780,4 +1056,54 @@ small |30% 미만
 
 
 
+
+
+############################################################
+### 풀이
+
+문제1. `popadults`는 해당 지역의 성인 인구, `poptotal`은 전체 인구를 나타냅니다. `midwest` 데이터에 '전체 인구 대비 미성년 인구 백분율' 변수를 추가하세요.
+
+# midwest 불러오기
+midwest <- as.data.frame(ggplot2::midwest)
+
+# midwest에 백분율 변수 추가
+midwest <- midwest %>%
+  mutate(ratio_child = (poptotal-popadults)/poptotal*100)
+
+
+
+문제2. 미성년 인구 백분율이 가장 높은 상위 5개 `county`(지역)의 미성년 인구 백분율을 출력하세요.
+
+midwest %>%
+  arrange(desc(ratio_child)) %>%   # ratio_child 내림차순 정렬
+  select(county, ratio_child) %>%  # county, ratio_child 추출
+  head(5)                          # 상위 5행 출력
+
+
+
+
+
+
+
+문제3. 분류표의 기준에 따라 미성년 비율 등급 변수를 추가하고, 각 등급에 몇 개의 지역이 있는지 알아보세요.
+
+# midwest에 grade 변수 추가
+midwest <- midwest %>%
+  mutate(grade = ifelse(ratio_child >= 40, "large",
+                        ifelse(ratio_child >= 30, "middle", "small")))
+  
+# 미성년 비율 등급 빈도표
+table(midwest$grade)  
+
+
+
+
+
+문제4. `popasian`은 해당 지역의 아시아인 인구를 나타냅니다. '전체 인구 대비 아시아인 인구 백분율' 변수를 추가하고, 하위 10개 지역의 `state`(주), `county`(지역명), 아시아인 인구 백분율을 출력하세요.
+
+midwest %>%
+  mutate(ratio_asian = (popasian/poptotal)*100) %>%  # 백분율 변수 추가
+  arrange(ratio_asian) %>%                           # 내림차순 정렬
+  select(state, county, ratio_asian) %>%             # 변수 추출
+  head(10)                                           # 상위 10행 출력 
 

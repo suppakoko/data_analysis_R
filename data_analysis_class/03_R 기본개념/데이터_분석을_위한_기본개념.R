@@ -624,6 +624,27 @@ qplot(data = mpg, x = drv, y = hwy, geom = "boxplot", colour = drv)
 
 
 
+###################################################################
+
+## 풀이
+
+### 고속도로 연비(hwy)별 빈도 막대 그래프 그려보세요
+qplot(data = mpg, x = hwy, bins = 30)
+
+### 도시 연비(cty)별 빈도 막대 그래프
+qplot(data = mpg, x = cty, bins = 30)
+
+### Drive train(drv)별 연비 그래프
+qplot(data = mpg, x = drv, y = hwy)
+
+### Drive train(drv)별 연비 그래프 (line)
+qplot(data = mpg, x = drv, y = hwy, geom = "line")
+
+### Drive train(drv)별 연비 그래프 (box plot)
+qplot(data = mpg, x = drv, y = hwy, geom = "boxplot")
+
+### Drive train(drv)별 연비 그래프 (box plot) 
+qplot(data = mpg, x = drv, y = hwy, geom = "boxplot", colour = drv)
 
 
 ###################################################################
@@ -694,6 +715,27 @@ qplot(data = mpg, x = drv, y = hwy, geom = "boxplot", colour = drv)
 
 
 
+
+
+
+
+### 풀이
+
+#### Q1. 시험 점수 변수 만들고 출력하기
+
+score <- c(80, 60, 70, 50, 90)
+score
+
+
+#### Q2. 전체 평균 구하기
+
+mean(score)
+
+
+#### Q3. 전체 평균 변수 만들고 출력하기
+
+mean_score <- mean(score)
+mean_score
 
 
 
