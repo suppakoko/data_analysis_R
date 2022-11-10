@@ -296,6 +296,38 @@ ggplot(data = ageg_income, aes(x = ageg, y = mean_income)) +
 
 
 
+####################################################################
+## 풀이
+#### 1. 연령대 및 성별 월급 평균표 만들기
+sex_income <- welfare_selected %>%
+  filter(!is.na(income)) %>%
+  group_by(ageg, sex) %>%
+  summarise(mean_income = mean(income))
+
+sex_income
+
+####################################################################
+#### 2. 그래프 만들기
+
+ggplot(data = sex_income, aes(x = ageg, y = mean_income, fill = sex)) +
+  geom_col() +
+  scale_x_discrete(limits = c("young", "middle", "old"))
+
+
+#### 성별 막대 분리
+ggplot(data = sex_income, aes(x = ageg, y = mean_income, fill = sex)) +
+  geom_col(position = "dodge") +
+  scale_x_discrete(limits = c("young", "middle", "old"))
+
+
+
+
+
+
+
+
+
+
 
 
 ####################################################################
@@ -305,6 +337,41 @@ ggplot(data = ageg_income, aes(x = ageg, y = mean_income)) +
 
 
 # 2. 성별 연령별 월급 평균표 그래프 만들기
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################################
+## 풀이
+# 성별 연령별 월급 평균표 만들기
+sex_age <- welfare_selected %>%
+  filter(!is.na(income)) %>%
+  group_by(age, sex) %>%
+  summarise(mean_income = mean(income))
+
+head(sex_age)
+
+####################################################################
+#### 2. 성별 연령별 월급 평균표 만들기 그래프 만들기
+
+ggplot(data = sex_age, aes(x = age, y = mean_income, col = sex)) + geom_line()
+
+
 
 
 
@@ -345,6 +412,27 @@ dim(list_job)
 
 
 
+
+
+
+
+
+
+
+####################################################################
+## 풀이
+
+#### 1. 직업 변수 검토하기
+class(welfare_selected$code_job)
+table(welfare_selected$code_job)
+
+## 2. `welfare_selected`에 직업명 결합**
+welfare_selected <- left_join(welfare_selected, list_job, id = "code_job")
+
+welfare_selected %>%
+  filter(!is.na(code_job)) %>%
+  select(code_job, job) %>%
+  head(10)
 
 
 
@@ -401,6 +489,52 @@ dim(list_job)
 
 
 
+####################################################################
+## 풀이
+
+#### 1. 직업별 월급 평균표 만들기
+job_income <- welfare_selected %>%
+  filter(!is.na(job) & !is.na(income)) %>%
+  group_by(job) %>%
+  summarise(mean_income = mean(income))
+
+head(job_income)
+
+
+
+####################################################################
+#### 상위 10개 추출
+
+top10 <- job_income %>%
+  arrange(desc(mean_income)) %>%
+  head(10)
+
+top10
+
+#### 그래프 만들기
+
+ggplot(data = top10, aes(x = reorder(job, mean_income), y = mean_income)) +
+  geom_col() +
+  coord_flip()
+
+
+#### 하위 10위 추출
+
+bottom10 <- job_income %>%
+  arrange(mean_income) %>%
+  head(10)
+
+bottom10
+
+#### 그래프 만들기
+
+ggplot(data = bottom10, aes(x = reorder(job, -mean_income),
+                            y = mean_income)) +
+  geom_col() +
+  coord_flip() +
+  ylim(0, 850)
+
+
 
 
 
@@ -450,6 +584,57 @@ dim(list_job)
 
 
 
+####################################################################
+## 풀이
+# 남성 직업 빈도 상위 10개 추출
+
+job_male <- welfare_selected %>%
+  filter(!is.na(job) & sex == "male") %>%
+  group_by(job) %>%
+  summarise(n = n()) %>%
+  arrange(desc(n)) %>%
+  head(10)
+
+job_male
+
+
+# 여성 직업 빈도 상위 10개 추출
+job_female <- welfare_selected %>%
+  filter(!is.na(job) & sex == "female") %>%
+  group_by(job) %>%
+  summarise(n = n()) %>%
+  arrange(desc(n)) %>%
+  head(10)
+
+job_female
+
+
+
+
+####################################################################
+#### 2. 그래프 만들기
+
+# 남성 직업 빈도 상위 10개 직업
+ggplot(data = job_male, aes(x = reorder(job, n), y = n)) +
+  geom_col() +
+  coord_flip()
+
+
+
+# 여성 직업 빈도 상위 10개 직업
+ggplot(data = job_female, aes(x = reorder(job, n), y = n)) +
+  geom_col() +
+  coord_flip()
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -480,6 +665,24 @@ dim(list_job)
 
 
 
+
+
+
+
+
+####################################################################
+## 풀이
+
+### 종교 변수 검토 및 전처리하기
+#변수 확인
+class(welfare_selected$religion)
+table(welfare_selected$religion)
+
+# 종교 유무 이름 부여
+welfare_selected$religion <- ifelse(welfare_selected$religion == 1, "yes", "no")
+table(welfare_selected$religion)
+
+qplot(welfare_selected$religion)
 
 
 
@@ -516,6 +719,26 @@ dim(list_job)
 
 
 
+
+
+
+####################################################################
+## 풀이
+
+#### 1. 변수 검토하기
+class(welfare_selected$marriage)
+table(welfare_selected$marriage)
+
+
+#### 2. 전처리
+# 이혼 여부 변수 만들기
+welfare_selected$group_marriage <- ifelse(welfare_selected$marriage == 1, "marriage",
+                          ifelse(welfare_selected$marriage == 3, "divorce", NA))
+
+table(welfare_selected$group_marriage)
+table(is.na(welfare_selected$group_marriage))
+
+qplot(welfare_selected$group_marriage)
 
 
 
@@ -558,6 +781,33 @@ dim(list_job)
 
 
 
+####################################################################
+## 풀이
+
+
+#### 종교 유무에 따른 이혼 여부 비율표 만들기
+
+religion_marriage <- welfare_selected %>%
+  filter(!is.na(group_marriage)) %>%
+  group_by(religion, group_marriage) %>%
+  summarise(n = n()) %>%
+  mutate(tot_group = sum(n)) %>%
+  mutate(pct = round(n/tot_group*100, 1))
+
+religion_marriage
+
+
+#### `count()` 활용
+religion_marriage <- welfare_selected %>%
+  filter(!is.na(group_marriage)) %>%
+  count(religion, group_marriage) %>%
+  group_by(religion) %>%
+  mutate(pct = round(n/sum(n)*100, 1))
+
+
+
+
+
 
 ####################################################################
 #### 이혼율 표 만들기
@@ -581,6 +831,26 @@ dim(list_job)
 
 
 
+
+
+
+
+
+
+####################################################################
+## 풀이
+
+# 이혼 데이터 추출
+divorce <- religion_marriage %>%
+  filter(group_marriage == "divorce") %>%
+  select(religion, pct)
+
+divorce
+
+
+####이혼율 그래프 만들기
+
+ggplot(data = divorce, aes(x = religion, y = pct)) + geom_col()
 
 
 
@@ -629,6 +899,33 @@ dim(list_job)
 
 
 ####################################################################
+## 풀이
+
+#### 연령대별 이혼 여부 비율표 만들기
+ageg_marriage <- welfare_selected %>%
+  filter(!is.na(group_marriage)) %>%
+  group_by(ageg, group_marriage) %>%
+  summarise(n = n()) %>%
+  mutate(tot_group = sum(n)) %>%
+  mutate(pct = round(n/tot_group*100, 1))
+
+ageg_marriage
+
+#### `count()` 활용
+
+ageg_marriage <- welfare_selected%>%
+  filter(!is.na(group_marriage)) %>%
+  count(ageg, group_marriage) %>%
+  group_by(ageg) %>%
+  mutate(pct = round(n/sum(n)*100, 1))
+
+
+
+
+
+
+
+####################################################################
 #### 연령대별 이혼 여부 비율표 그래프 만들기
 
 
@@ -654,6 +951,23 @@ dim(list_job)
 
 
 
+####################################################################
+## 풀이
+
+# 초년 제외, 이혼 추출
+ageg_divorce <- ageg_marriage %>%
+  filter(ageg != "young" & group_marriage == "divorce") %>%
+  select(ageg, pct)
+
+ageg_divorce
+
+
+
+# 이혼 여부율 그래프 만들기
+
+ggplot(data = ageg_divorce, aes(x = ageg, y = pct)) + geom_col()
+
+
 
 
 
@@ -661,6 +975,100 @@ dim(list_job)
 #### 연령대 및 종교 유무에 따른 이혼율 표 만들기
 
 # 연령대, 종교유무, 결혼상태별 비율표 만들기
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################################
+## 풀이
+
+# 연령대, 종교유무, 결혼상태별 비율표 만들기
+ageg_religion_marriage <- welfare_selected%>%
+  filter(!is.na(group_marriage) & ageg != "young") %>%
+  group_by(ageg, religion, group_marriage) %>%
+  summarise(n = n()) %>%
+  mutate(tot_group = sum(n)) %>%
+  mutate(pct = round(n/tot_group*100, 1))
+
+ageg_religion_marriage
+
+#### `count()` 활용
+
+ageg_religion_marriage <- welfare_selected%>%
+  filter(!is.na(group_marriage) & ageg != "young") %>%
+  count(ageg, religion, group_marriage) %>%
+  group_by(ageg, religion) %>%
+  mutate(pct = round(n/sum(n)*100, 1))
+
+
+
+
+
+
+
+
+####################################################################
+## 풀이
+
+#### 연령대 및 종교 유무에 따른 이혼율 그래프 만들기
+
+df_divorce <- ageg_religion_marriage %>%
+  filter(group_marriage == "divorce") %>%
+  select(ageg, religion, pct)
+
+df_divorce
+
+#### 연령대 및 종교 유무에 따른 이혼율 그래프 만들기
+ggplot(data = df_divorce, aes(x = ageg, y = pct, fill = religion )) +
+  geom_col(position = "dodge")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -722,6 +1130,47 @@ dim(list_job)
 
 
 
+####################################################################
+## 풀이
+
+#### 1. 변수 검토하기
+
+class(welfare_selected$code_region)
+table(welfare_selected$code_region)
+
+
+#### 2. 전처리
+### 지역 코드 목록 만들기
+list_region <- data.frame(code_region = c(1:7),
+                          region = c("서울",
+                                     "수도권(인천/경기)",
+                                     "부산/경남/울산",
+                                     "대구/경북",
+                                     "대전/충남",
+                                     "강원/충북",
+                                     "광주/전남/전북/제주도"))
+list_region
+
+
+
+#### `welfare_selected`에 지역명 변수 추가
+welfare_selected <- left_join(welfare_selected, list_region, id = "code_region")
+
+welfare_selected %>%
+  select(code_region, region) %>%
+  head
+
+  
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -733,6 +1182,49 @@ dim(list_job)
 
 
 #### 2. 지역별 연령대 비율 그래프 만들기
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################################
+## 풀이
+
+## 1.지역별 연령대 비율표 만들기
+region_ageg <- welfare_selected %>%
+  group_by(region, ageg) %>%
+  summarise(n = n()) %>%
+  mutate(tot_group = sum(n)) %>%
+  mutate(pct = round(n/tot_group*100, 2))
+
+head(region_ageg)
+
+
+#### `count()` 활용
+region_ageg <- welfare_selected %>%
+  count(region, ageg) %>%
+  group_by(region) %>%
+  mutate(pct = round(n/sum(n)*100, 2))
+
+region_ageg
+
+#### 2. 지역별 연령대 비율표 그래프 만들기
+ggplot(data = region_ageg, aes(x = region, y = pct, fill = ageg)) +
+  geom_col() +
+  coord_flip()
+
+
 
 
 

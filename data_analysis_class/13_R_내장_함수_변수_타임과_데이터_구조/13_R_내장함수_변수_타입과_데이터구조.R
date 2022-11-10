@@ -183,6 +183,24 @@ Q1. `dplyr` 대신 R 내장 함수를 이용해 `"suv"`와 `"compact"`의 '도�
 
 
 
+##################################################################
+### 풀이
+
+Q1. `dplyr` 대신 R 내장 함수를 이용해 `"suv"`와 `"compact"`의 '도시 및 고속도로 통합 연비' 평균을 구해보세요.
+
+mpg$tot <- (mpg$cty + mpg$hwy)/2         # 통합 연비 변수 만들기
+
+df_comp <- mpg[mpg$class == "compact",]  # compact 추출
+df_suv <- mpg[mpg$class == "suv",]       # suv 추출
+
+mean(df_comp$tot)                        # compact의 tot 평균 산출
+mean(df_suv$tot)                         # suv의 tot 평균 산출
+
+
+
+
+
+
 
 
 
@@ -279,6 +297,29 @@ levels(var2)              # 범주 확인
 
 
 - Q3. `drv`가 어떤 범주로 구성되는지 확인해 보세요.
+
+
+
+
+
+
+
+
+
+
+
+
+##################################################################
+### 풀이 
+
+
+class(mpg$drv)                 # 타입 확인
+mpg$drv <- as.factor(mpg$drv)  # factor로 변환
+class(mpg$drv)                 # 타입 확인
+levels(mpg$drv)                # 범주 확인
+
+
+
 
 
 

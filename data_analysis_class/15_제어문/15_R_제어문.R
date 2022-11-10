@@ -139,6 +139,30 @@ Q2. 변수 ch에 문자가 저장되어있다.
 
 
 
+############################################################
+## 풀이
+
+Q1
+
+if(x == 1) { print('one')} else if (x == 2) {print('two')} else {print('else!')}
+ifelse(x == 1, 'one', ifelse(x == 2, 'two', 'else!'))
+
+
+
+Q2
+
+ch <- 'e'
+ifelse(ch == 'a' | ch == 'b', 1, ifelse(ch == 'c'| ch =='d', 3, 0))
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -324,6 +348,22 @@ if (length(vSh) > 0) { # sheet 가 0이 아닐때
 
 
 
+
+
+
+
+
+
+###################################################################
+###  풀이
+for (iSh in 1:length(vSh)){
+  s_name <- vSh[iSh]
+  print(s_name)
+  save_fn <- paste(s_name, '.csv', sep = '')
+  cat('\b\b데이터 프레임',s_name,'은 ',save_fn,'에 저장되었습니다.\n\n')
+  df <- get(s_name)
+  write.csv(df, file = save_fn, sep = "\t")
+}
 
 
 
