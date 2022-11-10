@@ -275,12 +275,12 @@ length(unique(texts_2_vec))
 
 # Q4. 단어의 길이에 대한 분포를 구하고 막대그래프로 단어 길이 x에 대한 빈도 y의 막대그래프로 표현 하세요.
 nlength = nchar(texts_2_vec) # 단어의 길이
-word_length_tab = table(nlength[nlength])
+word_length_tab = table(nlength) # 이부분 수정하였습니다.
 word_length_tab
 
 
 library(ggplot2)
-ggplot(data.frame(word_length_tab), aes(x=Var1,y=Freq)) +
+ggplot(data.frame(word_length_tab), aes(x=nlength,y=Freq)) +
     geom_bar(stat="identity") +
     xlab("Word Length") + ylab("Frequency") +
     theme_minimal()
