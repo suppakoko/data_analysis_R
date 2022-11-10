@@ -260,14 +260,18 @@ while (count <= 5) {
 
 
 set.seed(123)
+
 x <- 5
 while (x >= 3 & x <= 10) {
     coin <- rbinom(1, 1, 0.5)  # 0과 1 무작위로 추출
+    print(coin)
     if (coin == 1) {
         x <- x + 1
     } else {
         x <- x - 1
     }
+    print("this is x")
+    print(x)
 }
 print(x)
 

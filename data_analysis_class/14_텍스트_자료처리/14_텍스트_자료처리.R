@@ -227,18 +227,18 @@ library(base)
 library(readr)
 library(stringr)
 
-file1 <- "자소서.txt"
+file1 <- "RMD/data_analysis_class/14_텍스트_자료처리/자소서.txt"
 texts <- read_lines(file1, locale=locale(encoding = "CP949"))
 head(texts, 5)
 
 
-Q1. 모든 문장부호를 제거하시오.
+Q1. 모든 문장부호를 제거하시오. (힌트 정규식 '[[:punct:]]' 사용)
 
 
 Q2. Q1의 결과에서 공백을 기준으로 단어를 분리하시오.
 
 
-Q3. 사용된 서로 다른 단어의 수를 구하시오.
+Q3. 사용된 서로 다른 단어의 수를 구하시오. unlist() 사용
 
 
 Q4. 단어의 길이에 대한 분포를 구하고 단어 길이 x에 대한 빈도 y의 막대그래프로 표현 하세요.
@@ -268,14 +268,16 @@ texts_2 = str_split(string = texts_1, pattern = " ")
 head(texts_2)
 
 # Q3. 사용된 서로 다른 단어의 수를 구하시오.
-texts_2_vec = do.call(c, texts_2) # 
+
+texts_2_vec = unlist(texts_2) # LIST를 vector로 변환
+texts_2_vec
 head(unique(texts_2_vec))
 length(unique(texts_2_vec))
 
 
 # Q4. 단어의 길이에 대한 분포를 구하고 막대그래프로 단어 길이 x에 대한 빈도 y의 막대그래프로 표현 하세요.
 nlength = nchar(texts_2_vec) # 단어의 길이
-word_length_tab = table(nlength) # 이부분 수정하였습니다.
+word_length_tab = table(nlength)
 word_length_tab
 
 
@@ -288,7 +290,7 @@ ggplot(data.frame(word_length_tab), aes(x=nlength,y=Freq)) +
 
 # Q5. Q4의 결과에서 한글자 짜리 단어는 삭제하시오.
 texts_2_vec_1 = texts_2_vec[nlength > 1]
-
+texts_2_vec_1
 
 # Q6. 단어의 빈도를 상위빈도순으로 구하시오.
 freq_words = table(texts_2_vec_1)
