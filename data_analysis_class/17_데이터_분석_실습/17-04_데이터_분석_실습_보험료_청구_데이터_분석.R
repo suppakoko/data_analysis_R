@@ -31,9 +31,6 @@
 
 
 
-##############################################
-## 풀이
-  insurance <- read.csv('insurance.csv')
 
 
 ##2 summary( )함수로 데이터 요약하고
@@ -47,13 +44,6 @@
 
 
 
-##############################################
-## 풀이
-
-  summary(insurance)
-  hist(insurance$age)
-  table(insurance$region)
-
 
 ##3 bmi와 charges의 산점도 그리고 상관계수 계산하기
 
@@ -64,14 +54,6 @@
 
 
 
-
-
-
-##############################################
-## 풀이
-
-  plot(insurance$bmi, insurance$charges, pch=16)
-  cor(insurance$bmi, insurance$charges)
 
   
   
@@ -84,13 +66,6 @@
 
 
 
-
-
-##############################################
-## 풀이
-
-  boxplot(charges ~ region, data=insurance)
-  aggregate(charges ~ region, data=insurance, mean)
 
 
 
@@ -107,22 +82,3 @@
 
 
 
-
-
-
-
-
-##############################################
-## 풀이
-
-  lm_ins = lm(charges ~ ., data=insurance)
-  summary(lm_ins)
-
-  
-  library(rpart)
-  tree_ins = rpart(charges ~ ., data = insurance)
-  tree_ins
-  
-  install.packages('rpart.plot')
-  library(rpart.plot)
-  rpart.plot(tree_ins)
