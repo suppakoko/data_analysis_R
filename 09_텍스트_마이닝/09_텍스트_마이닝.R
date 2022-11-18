@@ -16,10 +16,10 @@ library(ggplot2)
 install.packages("multilinguer")
 install.packages("rJava")
 install.packages("memoise")
-install.packages("KoNLP")
+#install.packages("KoNLP")
 install.packages(c("stringr","hash","tau","Sejong","RSQLite","devtools"), type = "binary")
 install.packages("remotes")
-remote::install_github("haven-jeon/KoNLP", upgrade = "never", INSTALL_opts = c("--no-multiarch"))
+remotes::install_github("haven-jeon/KoNLP", upgrade = "never", INSTALL_opts = c("--no-multiarch"))
 multilinguer::install_jdk()
 
 
